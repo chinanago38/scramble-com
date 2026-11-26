@@ -9,8 +9,9 @@ GitHub Pages の静的サイト。tools/build.py が tools/content/*.html から
 - 1ページ本文3,000文字以上を目標（規約ページを除く）
 
 ## 毎月の更新（統合幕僚監部「月間緊急発進状況」が翌月の中旬〜下旬に出る）
+0. GitHub Actions（.github/workflows/js.yml、1日2回）が統合幕僚監部の報道発表資料を見て、題名に「緊急発進」が入った新しいPDFがあれば本文を data/js_scramble/<ファイル名>.txt に保存し、Issue を立てて知らせる（記録は data/js_scramble.json）。クラウド側から mod.go.jp に届かないときは、この保存テキストを読んで数字を写す
 1. https://www.mod.go.jp/js/ で最新の月間緊急発進状況のPDFを確認
 2. tools/data.py の M2026（合計・方面隊別・国別）に月を1つ追加し、M2026_ASOF と SOURCES["m202610"] を更新
-3. 本文中の「10月までで577回」などの文章の数字を直す（grep で 577 などを探す）
+3. 本文中の「10月までで577回」など（トップ・/naha/ の南西空274回、/latest/ などの比較の文も）の文章の数字を直す（grep で 577 などを探す）
 4. python3 tools/build.py → push
 年度のまとめ（4月ごろ）が出たら YEARS・COUNTRY に年度を追加し、M2026 を確定値で置き換え、新年度の月別を始める。
