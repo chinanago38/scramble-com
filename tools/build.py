@@ -81,6 +81,14 @@ def fill(body):
         "NAHA_CMP": lambda: table(["月", "2025年度", "2026年度", "差"],
                                   [[m, a, b, f"{b - a:+d}"] for m, a, b in zip(MONTHS, M2025["南西空"], M2026["南西空"])]),
         "NAHA_LIVE": lambda: naha_live(),
+        "YEAR_DIFF": lambda: table(["年度", "合計", "前年度からの増減"],
+                                   [[f"{y}年度", v[0], (f"{v[0] - YEARS[y - 1][0]:+,d}" if y - 1 in YEARS else "―")] for y, v in sorted(YEARS.items(), reverse=True)]),
+        "HOUMEN_MAXMIN": lambda: table(["方面隊", "多かった年度", "少なかった年度"],
+                                       [[n, f"{max(YEARS, key=lambda y: YEARS[y][i])}年度（{max(v[i] for v in YEARS.values()):,}回）",
+                                         f"{min(YEARS, key=lambda y: YEARS[y][i])}年度（{min(v[i] for v in YEARS.values()):,}回）"]
+                                        for i, n in [(1, "北部航空方面隊"), (2, "中部航空方面隊"), (3, "西部航空方面隊"), (4, "南西航空方面隊")]]),
+        "PACE_TABLE": lambda: table(["区分", "2026年度（4月〜10月）", "2025年度の同じ時期", "2025年度の1年間"],
+                                    [[k, sum(M2026[k]), sum(M2025[k][:len(M2026[k])]), sum(M2025[k])] for k in ["合計", "北空", "中空", "西空", "南西空", "中国", "ロシア"]]),
         "LATEST_TOTAL": lambda: f"{sum(M2026['合計']):,}",
         "LATEST_ASOF": lambda: M2026_ASOF,
     }
