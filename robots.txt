@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://xn--pckta2g7cl0c.com/sitemap.xml
