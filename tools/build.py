@@ -5,12 +5,12 @@ tools/content/<name>.html → /<name>/（__ は / に。index は トップ）�
 本文中の {{...}} は data.py の公式数字から表やグラフを差し込む。"""
 import glob, html, os, re, sys, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, SOURCES
+from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, SOURCES, NAHA_LIVES, CHANNEL_URL, CHANNEL_LIVE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://xn--pckta2g7cl0c.com"
 SITE = "スクランブル.com"
-CSS_VER = "20261126a"
+CSS_VER = "20261126b"
 AD = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1061443138303693" crossorigin="anonymous"></script>'
 NAV = [("那覇のスクランブル", "/naha/"), ("最新の回数", "/latest/"), ("年度別の推移", "/data/"), ("国・地域別", "/country/"), ("方面隊別", "/houmentai/"), ("スクランブルとは", "/shikumi/")]
 esc = html.escape
@@ -34,6 +34,17 @@ def table(head, rows):
 
 def pct(a, b):
     return f"{a / b * 100:.0f}%"
+
+def naha_live():
+    vid, day, note = NAHA_LIVES[0]
+    player = (f'<div class="yt"><iframe src="https://www.youtube-nocookie.com/embed/{vid}" title="{esc(note)}" loading="lazy" '
+              f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>')
+    cards = "".join(f'<a class="ytc" href="https://www.youtube.com/watch?v={v}" target="_blank" rel="noopener">'
+                    f'<img src="https://img.youtube.com/vi/{v}/hqdefault.jpg" alt="{esc(n)}" loading="lazy">'
+                    f'<span><b>{esc(d)}</b>{esc(n)}</span></a>' for v, d, n in NAHA_LIVES)
+    btns = (f'<p class="ytbtns"><a href="{CHANNEL_LIVE}" target="_blank" rel="noopener">ちんあなごチャンネルのライブ配信一覧</a>'
+            f'<a href="{CHANNEL_URL}" target="_blank" rel="noopener">チャンネルを見る</a></p>')
+    return f'<div class="live-box">{player}<div class="ytcards">{cards}</div>{btns}</div>'
 
 def fill(body):
     last = max(YEARS)
@@ -69,6 +80,7 @@ def fill(body):
         "NAHA_M2025_BARS": lambda: bars(list(zip(MONTHS, M2025["南西空"]))),
         "NAHA_CMP": lambda: table(["月", "2025年度", "2026年度", "差"],
                                   [[m, a, b, f"{b - a:+d}"] for m, a, b in zip(MONTHS, M2025["南西空"], M2026["南西空"])]),
+        "NAHA_LIVE": lambda: naha_live(),
         "LATEST_TOTAL": lambda: f"{sum(M2026['合計']):,}",
         "LATEST_ASOF": lambda: M2026_ASOF,
     }

@@ -75,3 +75,14 @@ SOURCES = {
     "nahakitei": ("国土交通省大阪航空局「那覇空港供用規程」", "https://www.cab.mlit.go.jp/wcab/file/nahar3.3.25.pdf"),
     "js": ("統合幕僚監部 報道発表資料", "https://www.mod.go.jp/js/"),
 }
+
+# ちんあなごチャンネルで女将さんが配信した那覇空港ライブ（アーカイブ）。新しい順。
+CHANNEL_URL = "https://www.youtube.com/channel/UC-iKt6xd8uD-8_kXRfPY7Jw"
+CHANNEL_LIVE = "https://www.youtube.com/@chinanago/streams"
+NAHA_LIVES = [
+    ("at0oFt1fodo", "2025年12月14日", "美ら島エアフェスタ2025 当日のライブ。ブルーインパルスとF-15が沖縄の空を飛行"),
+    ("cuuhr5BenTQ", "2025年12月13日", "美ら島エアフェスタ ブルーインパルス予行飛行の日の那覇基地・空港ライブ"),
+    ("KnJMOtDBcVU", "2025年12月12日", "ブルーインパルスが沖縄に到着。那覇基地・空港ライブ、F-15も飛ぶ"),
+    ("yWImwTV_wzc", "2025年12月11日", "ちんあなごも沖縄入り。那覇空港ライブ、F-15イーグルが飛ぶ"),
+    ("onlnfBZ9TNA", "2025年12月11日", "ブルーインパルス到着前の那覇基地・空港ライブ"),
+]
