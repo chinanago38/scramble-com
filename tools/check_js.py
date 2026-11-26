@@ -82,7 +82,8 @@ def main():
     if problems:
         issue("スクランブル.com: 自動更新できなかった資料があります", "\n".join(problems))
     data["items"] = sorted(data["items"] + found, key=lambda x: x["date"], reverse=True)[:300]
-    data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    if found or first:
+        data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     tmp = OUT + ".tmp"
     json.dump(data, open(tmp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     os.replace(tmp, OUT)
