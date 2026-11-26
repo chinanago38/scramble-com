@@ -12,7 +12,7 @@ DOMAIN = "https://xn--pckta2g7cl0c.com"
 SITE = "スクランブル.com"
 CSS_VER = "20261126a"
 AD = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1061443138303693" crossorigin="anonymous"></script>'
-NAV = [("最新の回数", "/latest/"), ("年度別の推移", "/data/"), ("国・地域別", "/country/"), ("方面隊別", "/houmentai/"), ("スクランブルとは", "/shikumi/")]
+NAV = [("那覇のスクランブル", "/naha/"), ("最新の回数", "/latest/"), ("年度別の推移", "/data/"), ("国・地域別", "/country/"), ("方面隊別", "/houmentai/"), ("スクランブルとは", "/shikumi/")]
 esc = html.escape
 
 def strip(s):
@@ -60,6 +60,15 @@ def fill(body):
                                      [[m, a, b, c, d] for m, a, b, c, d in zip(MONTHS, M2025["中国"], M2026["中国"], M2025["ロシア"], M2026["ロシア"])]),
         "HOUMEN_SHARE": lambda: table(["年度", "北空", "中空", "西空", "南西空"],
                                       [[f"{y}年度", *[pct(x, v[0]) for x in v[1:]]] for y, v in sorted(YEARS.items(), reverse=True)]),
+        "NAHA_TOTAL": lambda: f"{sum(M2026['南西空']):,}",
+        "NAHA_PCT": lambda: pct(sum(M2026["南西空"]), sum(M2026["合計"])),
+        "NAHA_YEAR_BARS": lambda: bars([(f"{y}年度", v[4]) for y, v in YEARS.items()], hi="2016年度"),
+        "NAHA_YEAR_TABLE": lambda: table(["年度", "全国の合計", "南西航空方面隊", "全国に占める割合"],
+                                         [[f"{y}年度", v[0], v[4], pct(v[4], v[0])] for y, v in sorted(YEARS.items(), reverse=True)]),
+        "NAHA_M2026_BARS": lambda: bars(list(zip(MONTHS, M2026["南西空"]))),
+        "NAHA_M2025_BARS": lambda: bars(list(zip(MONTHS, M2025["南西空"]))),
+        "NAHA_CMP": lambda: table(["月", "2025年度", "2026年度", "差"],
+                                  [[m, a, b, f"{b - a:+d}"] for m, a, b in zip(MONTHS, M2025["南西空"], M2026["南西空"])]),
         "LATEST_TOTAL": lambda: f"{sum(M2026['合計']):,}",
         "LATEST_ASOF": lambda: M2026_ASOF,
     }

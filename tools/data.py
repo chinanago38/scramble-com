@@ -68,5 +68,10 @@ SOURCES = {
     "wp2018": ("防衛省「平成30年版 防衛白書」わが国周辺海空域における警戒監視", "https://www.mod.go.jp/j/publication/wp/wp2018/pdf/30000032.pdf"),
     "egov": ("e-Gov法令検索「自衛隊法」（昭和29年法律第165号）", "https://laws.e-gov.go.jp/law/329AC0000000165"),
     "cas": ("内閣官房 領土・主権対策企画調整室「防衛省の取組」", "https://www.cas.go.jp/jp/ryodo/torikumi/mod.html"),
+    "naha": ("航空自衛隊 那覇基地「那覇基地紹介」", "https://www.mod.go.jp/asdf/naha/naha/base/"),
+    "swadf": ("航空自衛隊 南西航空方面隊「部隊紹介」", "https://www.mod.go.jp/asdf/swadf/second/third/butai.html"),
+    "mlit2020": ("国土交通省「那覇空港滑走路増設事業の供用について」（2019年11月26日）", "https://www.mlit.go.jp/report/press/kouku06_hh_000028.html"),
+    "mlit2020pdf": ("国土交通省 航空局「那覇空港滑走路増設事業の供用について」資料（PDF）", "https://www.mlit.go.jp/report/press/content/001317766.pdf"),
+    "nahakitei": ("国土交通省大阪航空局「那覇空港供用規程」", "https://www.cab.mlit.go.jp/wcab/file/nahar3.3.25.pdf"),
     "js": ("統合幕僚監部 報道発表資料", "https://www.mod.go.jp/js/"),
 }
