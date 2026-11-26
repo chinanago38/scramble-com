@@ -1,0 +1,23 @@
+name: Check Joint Staff scramble releases
+# 統合幕僚監部の報道発表資料に「緊急発進」の新しいPDFが出たら、本文を保存して Issue で知らせる
+on:
+  schedule:
+    - cron: "17 2,10 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y -qq poppler-utils >/dev/null
+      - run: python3 tools/check_js.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data
+          git diff --cached --quiet || (git commit -m "Record Joint Staff scramble releases" && git pull --rebase origin main && git push)
