@@ -5,7 +5,7 @@ tools/content/<name>.html → /<name>/（__ は / に。index は トップ）�
 本文中の {{...}} は data.py の公式数字から表やグラフを差し込む。"""
 import glob, html, os, re, sys, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, SOURCES, NAHA_LIVES, CHANNEL_URL, CHANNEL_LIVE
+from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, M2026_ASOF_DATE, SOURCES, NAHA_LIVES, CHANNEL_URL, CHANNEL_LIVE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://xn--pckta2g7cl0c.com"
@@ -58,7 +58,7 @@ def fill(body):
                                        [[f"{y}年度", pct(v[0], sum(v)), pct(v[1], sum(v))] for y, v in sorted(COUNTRY.items(), reverse=True)]),
         "M2026_BARS": lambda: bars(list(zip(MONTHS, M2026["合計"]))),
         "M2026_TABLE": lambda: table(["区分", *MONTHS[:len(M2026["合計"])], "計"],
-                                     [[k, *v, sum(v)] for k, v in M2026.items()]),
+                                     [[k, *v, sum(v)] for k, v in M2026.items() if k == "合計" or any(v)]),
         "M2025_TABLE": lambda: table(["区分", *MONTHS, "計"], [[k, *v, sum(v)] for k, v in M2025.items()]),
         "M2025_BARS": lambda: bars(list(zip(MONTHS, M2025["合計"]))),
         "HOUMEN_2026": lambda: bars([("北部航空方面隊", sum(M2026["北空"])), ("中部航空方面隊", sum(M2026["中空"])),
@@ -112,6 +112,76 @@ def url_of(f):
     n = os.path.basename(f)[:-5]
     return "/" if n == "index" else "/" + n.replace("__", "/") + "/"
 
+
+# ---- 本文中の {{=式}} を、最新の月間データから計算した文字に置き換える（毎月の自動更新で文章も追随させる）
+def expr_ctx():
+    n = len(M2026["合計"]); L = MONTHS[n - 1]
+    y_, m_, d_ = (int(x) for x in M2026_ASOF_DATE.split("-"))
+    cur = lambda k: M2026.get(k, [0] * n)
+    s = lambda k: sum(cur(k))
+    p = lambda k: sum(M2025[k][:n])
+    y = lambda k: sum(M2025[k])
+    mv = lambda k, mon: cur(k)[MONTHS.index(mon)]
+    pv = lambda k, mon: M2025[k][MONTHS.index(mon)]
+    c = lambda x: f"{x:,}"
+    def top(k):
+        v = cur(k); return MONTHS[v.index(max(v))]
+    def topv(k): return max(cur(k))
+    def tops(k, num=3):
+        v = cur(k); idx = sorted(range(n), key=lambda i: -v[i])[:num]
+        return "、".join(f"{MONTHS[i]}（{v[i]}回）" for i in sorted(idx))
+    def mlist(k):
+        return "、".join(f"{MONTHS[i]}{v}回" for i, v in enumerate(cur(k)))
+    H = ["北空", "中空", "西空", "南西空"]
+    HN = {"北空": "北部航空方面隊", "中空": "中部航空方面隊", "西空": "西部航空方面隊", "南西空": "南西航空方面隊"}
+    def nsw_top():
+        exc = [i for i in range(n) if cur("南西空")[i] < max(cur(h)[i] for h in H)]
+        if not exc: return "すべての月で4つの航空方面隊のなかでもっとも多く"
+        if len(exc) == n: return "4つの航空方面隊のなかで月ごとの最多にはなっていないものの"
+        return "・".join(MONTHS[i] for i in exc) + "を除くすべての月で4つの航空方面隊のなかでもっとも多く"
+    def nsw_exc():
+        out = []
+        for i in range(n):
+            mx = max(H, key=lambda h: cur(h)[i])
+            if mx != "南西空": out.append(f"{MONTHS[i]}は{HN[mx]}（{cur(mx)[i]}回）が南西航空方面隊（{cur('南西空')[i]}回）を上回りました")
+        return ("。".join(out) + "。") if out else "どの月も南西航空方面隊が最多でした。"
+    def vs_year(k):
+        a, b = s(k), y(k)
+        return f"2025年度の1年間（{c(b)}回）をすでに上回りました" if a > b else (f"2025年度の1年間（{c(b)}回）と同じ回数になりました" if a == b else f"2025年度の1年間（{c(b)}回）まであと{c(b - a)}回です")
+    def ratio(k):
+        a, b = s(k), y(k); r = a / b
+        return f"約{r:.1f}倍" if r >= 1.15 else ("ほぼ同じ" if r >= 0.9 else f"約{round(r * 10)}割")
+    def diffw(a, b):
+        return f"{c(a - b)}回多く" if a > b else (f"{c(b - a)}回少なく" if a < b else "同じ回数に")
+    def mcmp(k):
+        up = [MONTHS[i] for i in range(n) if cur(k)[i] > M2025[k][i]]
+        dn = [MONTHS[i] for i in range(n) if cur(k)[i] < M2025[k][i]]
+        return up, dn
+    def cmp_sentence(k="合計"):
+        up, dn = mcmp(k)
+        if not dn: return "すべての月で2025年度を上回っています"
+        if not up: return "すべての月で2025年度を下回っています"
+        if len(dn) <= len(up): return f"{'・'.join(dn)}を除くすべての月で2025年度を上回っています"
+        return f"{'・'.join(up)}は2025年度を上回り、{'・'.join(dn)}は下回っています"
+    def bigdiff(k="合計"):
+        d = [cur(k)[i] - M2025[k][i] for i in range(n)]; i = d.index(max(d))
+        return f"{MONTHS[i]}で、2025年度の{M2025[k][i]}回に対して2026年度は{cur(k)[i]}回（{d[i]}回多い）"
+    import datetime as _dt
+    days = (_dt.date(y_, m_, d_) - _dt.date(2026, 4, 1)).days + 1
+    import calendar as _cal
+    ldays = _cal.monthrange(y_, m_)[1]
+    nk_zero = all(v == 0 for v in cur("北朝鮮"))
+    nxt = MONTHS[n] if n < 12 else None
+    pub = MONTHS[(n + 1) % 12] if n < 12 else "4月"
+    return dict(n=n, L=L, R=f"4月〜{L}", NM=f"{n}か月", AD=f"{y_}年{m_}月{d_}日", ADM=f"{y_}年{m_}月", s=s, p=p, y=y, mv=mv, pv=pv,
+                c=c, top=top, topv=topv, tops=tops, mlist=mlist, nsw_top=nsw_top, nsw_exc=nsw_exc, vs_year=vs_year, ratio=ratio,
+                diffw=diffw, cmp_sentence=cmp_sentence, bigdiff=bigdiff, days=days, ldays=ldays, nk_zero=nk_zero, nxt=nxt, pub=pub,
+                pct=lambda a, b: f"{a / b * 100:.0f}%", MONTHS=MONTHS, M2026=M2026)
+
+def exprs(text):
+    ctx = expr_ctx()
+    return re.sub(r"\{\{=(.+?)\}\}", lambda m: str(eval(m.group(1), dict(ctx))), text)
+
 def render(url, title, desc, body):
     body = src_links(fill(body))
     m = re.search(r"<h1>(.*?)</h1>\s*(<p class=\"updated\">.*?</p>)?", body, re.S)
@@ -161,7 +231,7 @@ def render(url, title, desc, body):
 def main():
     urls = []
     for f in sorted(glob.glob(os.path.join(ROOT, "tools", "content", "*.html"))):
-        lines = open(f, encoding="utf-8").read().split("\n", 2)
+        lines = exprs(open(f, encoding="utf-8").read()).split("\n", 2)
         if len(lines) < 3 or '<section class="sources">' not in lines[2]: continue
         url = url_of(f)
         out = os.path.join(ROOT, url.strip("/"), "index.html") if url != "/" else os.path.join(ROOT, "index.html")

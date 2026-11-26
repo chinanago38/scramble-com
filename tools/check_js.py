@@ -3,6 +3,8 @@
 新しいPDFが見つかったら、本文テキストを data/js_scramble/<ファイル名>.txt に保存し、
 GitHub の Issue を立てて知らせる。数字の書き換え（tools/data.py）は人が確かめてから行う。"""
 import json, os, re, subprocess, sys, tempfile, urllib.parse, urllib.request
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import update_monthly
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,11 +61,26 @@ def main():
         open(os.path.join(TXT, name), "w", encoding="utf-8").write(text)
         f["text"] = f"data/js_scramble/{name}"
         print("saved:", f["date"], f["title"])
-    if found and not first:
-        body = "統合幕僚監部の報道発表資料に、緊急発進の新しい資料が出ました。\n\n" + "\n".join(
-            f"- {f['date']} [{f['title']}]({f['url']})" + (f"（本文テキスト: `{f['text']}`）" if f.get("text") else "") for f in found)
-        body += "\n\n本文テキストを確かめて tools/data.py の数字を更新してください（AGENTS.md の「毎月の更新」）。"
-        issue(f"緊急発進の新しい資料: {found[0]['title']}", body)
+    # 月間緊急発進状況は自動で読み取り、検算が合えば tools/m2026.json を更新する（古い順に適用）
+    problems = []
+    for f in sorted(found, key=lambda x: x["date"]):
+        if first or "月間緊急発進状況" not in f["title"]:
+            continue
+        if not f.get("text"):
+            problems.append(f"- 本文を取得できませんでした: [{f['title']}]({f['url']})"); continue
+        try:
+            r = update_monthly.apply(os.path.join(ROOT, f["text"]), f["url"])
+        except Exception as e:
+            r = f"error:{e}"
+        f["auto"] = r
+        print("monthly:", f["title"], r)
+        if r.startswith("error") or r.startswith("newfy"):
+            problems.append(f"- [{f['title']}]({f['url']}) → `{r}`（本文: `{f['text']}`）")
+    yearly = [f for f in found if not first and "年度" in f["title"] and "月間" not in f["title"] and "四半期" not in f["title"] and "上半期" not in f["title"]]
+    for f in yearly:
+        problems.append(f"- 年度のまとめが出ました（年度別の表 tools/data.py の YEARS・COUNTRY・M2025 の更新と、新年度の月別への切り替えが必要）: [{f['title']}]({f['url']})")
+    if problems:
+        issue("スクランブル.com: 自動更新できなかった資料があります", "\n".join(problems))
     data["items"] = sorted(data["items"] + found, key=lambda x: x["date"], reverse=True)[:300]
     data["updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
     tmp = OUT + ".tmp"

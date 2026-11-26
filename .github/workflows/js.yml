@@ -1,5 +1,5 @@
 name: Check Joint Staff scramble releases
-# 統合幕僚監部の報道発表資料に「緊急発進」の新しいPDFが出たら、本文を保存して Issue で知らせる
+# 統合幕僚監部の報道発表資料に「緊急発進」の新しいPDFが出たら本文を保存し、月間資料は自動で読み取ってサイトを更新・公開する（失敗や年度のまとめは Issue で知らせる）
 on:
   schedule:
     - cron: "17 2,10 * * *"
@@ -16,8 +16,9 @@ jobs:
       - run: python3 tools/check_js.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: python3 tools/build.py
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A data
-          git diff --cached --quiet || (git commit -m "Record Joint Staff scramble releases" && git pull --rebase origin main && git push)
+          git add -A
+          git diff --cached --quiet || (git commit -m "Auto-update from Joint Staff scramble releases" && git pull --rebase origin main && git push)

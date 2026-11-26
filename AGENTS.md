@@ -8,10 +8,11 @@ GitHub Pages の静的サイト。tools/build.py が tools/content/*.html から
 - 外国機の意図や今後の見通しを推測で書かない。中立（特定の国・立場を支持・批判しない）
 - 1ページ本文3,000文字以上を目標（規約ページを除く）
 
-## 毎月の更新（統合幕僚監部「月間緊急発進状況」が翌月の中旬〜下旬に出る）
-0. GitHub Actions（.github/workflows/js.yml、1日2回）が統合幕僚監部の報道発表資料を見て、題名に「緊急発進」が入った新しいPDFがあれば本文を data/js_scramble/<ファイル名>.txt に保存し、Issue を立てて知らせる（記録は data/js_scramble.json）。クラウド側から mod.go.jp に届かないときは、この保存テキストを読んで数字を写す
-1. https://www.mod.go.jp/js/ で最新の月間緊急発進状況のPDFを確認
-2. tools/data.py の M2026（合計・方面隊別・国別）に月を1つ追加し、M2026_ASOF と SOURCES["m202610"] を更新
-3. 本文中の「10月までで577回」など（トップ・/naha/ の南西空274回、/latest/ などの比較の文も）の文章の数字を直す（grep で 577 などを探す）
-4. python3 tools/build.py → push
-年度のまとめ（4月ごろ）が出たら YEARS・COUNTRY に年度を追加し、M2026 を確定値で置き換え、新年度の月別を始める。
+## 毎月の更新（自動）
+- GitHub Actions（.github/workflows/js.yml、1日2回）が統合幕僚監部の報道発表資料を確認し、題名に「緊急発進」が入った新しいPDFの本文を data/js_scramble/ に保存する
+- 「月間緊急発進状況」は tools/update_monthly.py が読み取り、検算（方面隊の合計・国地域の合計・合計列）がすべて合ったときだけ tools/m2026.json を書き換え、build してそのまま公開する
+- 本文の今年度の数字は {{=式}}（tools/build.py の expr_ctx）で m2026.json から計算して入れている。今年度の回数を本文に直接書かないこと
+- 読み取り失敗・年度が変わった・年度のまとめが出たときだけ Issue が立つ
+
+## 年度の切り替え（年1回、4月ごろの年度のまとめのあと）
+年度のまとめが出たら YEARS・COUNTRY に年度を追加し、M2025 を確定値に、m2026.json を新年度に切り替える（本文の「2026年度」「2025年度」の表記と update_monthly.FY も直す）。
