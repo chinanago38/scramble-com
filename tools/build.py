@@ -11,7 +11,7 @@ from data import KOMATSU_RUNWAY, KOMATSU_SCRAMBLE_MILESTONE, KOMATSU_FIRST_F35A,
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://xn--pckta2g7cl0c.com"
 SITE = "スクランブル.com"
-CSS_VER = "20261127i"
+CSS_VER = "20261128a"
 AD = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1061443138303693" crossorigin="anonymous"></script>'
 NAV = [("那覇のスクランブル", "/naha/"), ("最新の回数", "/latest/"), ("年度別の推移", "/data/"), ("国・地域別", "/country/"), ("方面隊別", "/houmentai/"), ("スクランブルとは", "/shikumi/")]
 esc = html.escape
@@ -208,6 +208,14 @@ def photo_hero(url, h1, updated):
     return (f'<div class="page-hero photo-hero" style="background-image:linear-gradient(180deg,rgba(6,22,44,.35),rgba(6,22,44,.88)),url({c[1]})">'
             f'<h1>{h1}</h1>{updated}{credit}</div>\n')
 
+def art_hero(h1, updated):
+    # トップは3Dちんあなごの絵を上に切らずに出し、見出しと日付は絵の下の青い地に置く（字が絵に重ならない）
+    return ('<div class="page-hero art-hero"><img src="/assets/img/top-hero-chinanago-1280.webp" '
+            'srcset="/assets/img/top-hero-chinanago-640.webp 640w, /assets/img/top-hero-chinanago-1280.webp 1280w" '
+            'sizes="(max-width: 900px) 100vw, 860px" width="1280" height="716" fetchpriority="high" '
+            'alt="朝焼けの滑走路から飛び立つ戦闘機2機と、手前の砂から顔を出す2匹の3Dちんあなごのイラスト">'
+            f'<div class="art-text"><h1>{h1}</h1>{updated}</div></div>\n')
+
 def link_cards(main):
     # リンクが3つ以上ならぶ一覧は、写真つきのカードにする
     photos = picked_rows()
@@ -228,7 +236,7 @@ def render(url, title, desc, body):
     hero = ""
     if m:
         body = body[:m.start()] + body[m.end():]
-        hero = photo_hero(url, m.group(1), m.group(2) or "") or f'<div class="page-hero"><h1>{m.group(1)}</h1>{m.group(2) or ""}</div>\n'
+        hero = art_hero(m.group(1), m.group(2) or "") if url == "/" else photo_hero(url, m.group(1), m.group(2) or "") or f'<div class="page-hero"><h1>{m.group(1)}</h1>{m.group(2) or ""}</div>\n'
     k = body.find('<section class="sources">')
     main_part, src = (body[:k], body[k:].replace('<section class="sources">', '<section class="sources block">')) if k >= 0 else (body, "")
     crumb = "" if url == "/" else f'<div class="crumb"><a href="/">{SITE}</a> › {esc(strip(m.group(1)) if m else title)}</div>\n'

@@ -1,4 +1,5 @@
 # HANDOFF
+- 2026-11-28 トップのヒーローに3Dちんあなご入りの絵（assets/img/top-hero-chinanago-*.webp・Higgsfield 1枚 0.5クレジット・job fb04db04-b9cd-4153-9212-bdfd216ad4fb・tools/build.py の art_hero）。次：作り直すときは運営者に見せてから。
 - 2026-11-28 /adiz/・/komatsu/ を出典と照合して公開（小松飛行場の出典の404を国土交通省の資料に差し替え・/komatsu/ の写真3枚を小松基地の戦闘機に・トップの自分へのリンクを削除）。次：28日分の表示を Search Console で見る。
 - 2026-11-27 面を2本足し、0面を3,000字以上にした・写真を2面に割り当てた（seo-system/tools/gh-grow.js）。本文の面 9／目標 25・3,000字未満 0・箱（要点・表・手順・質問）が足りない面 4。
 - 2026-11-27 写真カードと「要点の箱・手順・よくある質問」の見た目を足し、Commons の自由ライセンスの写真を 6 面に割り当てた（tools/photos/picked.tsv）。次：面の追加と箱の追記は seo-system/tools/gh-grow.js。

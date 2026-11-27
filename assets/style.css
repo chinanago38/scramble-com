@@ -39,6 +39,9 @@ nav.global a:hover{background:rgba(255,255,255,.28);color:#fff}
 .page-hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:220px;height:220px;border-radius:50%;background:rgba(143,211,244,.18)}
 .page-hero h1{margin:0 0 6px;font-size:1.7rem;line-height:1.35;color:#fff}
 .page-hero .updated{color:#cfe9f5;margin:0}
+.page-hero.art-hero{padding:0}
+.art-hero img{display:block;width:100%;height:auto}
+.art-hero .art-text{position:relative;z-index:1;padding:16px 24px 20px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative;z-index:1}
 .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:4px 12px;font-size:.88rem;color:#fff}
 .chip b{color:#ffd28a}
