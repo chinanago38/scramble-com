@@ -219,7 +219,7 @@ def render(url, title, desc, body):
 </div></main>
 
 <footer class="site"><div class="wrap">
-  <p>{SITE} は、航空自衛隊の緊急発進（スクランブル）について、防衛省・統合幕僚監部の公式発表の数字をまとめた個人運営の情報サイトです。防衛省・自衛隊の公式サイトではありません。</p>
+  <p>{SITE} は、航空自衛隊の緊急発進（スクランブル）について、防衛省・統合幕僚監部の公式発表の数字をまとめた情報サイトです。防衛省・自衛隊とは関係のない、ちんあなご編集部のサイトです。</p>
   <p>{" ・ ".join(f'<a href="{u}">{t}</a>' for t, u in [("トップ", "/")] + NAV)}</p>
   <p><a href="/operator/">運営者情報</a> ・ <a href="/editorial-policy/">編集方針</a> ・ <a href="/contact/">お問い合わせ</a> ・ <a href="/privacy/">プライバシーポリシー</a> ・ <a href="/disclaimer/">免責事項</a></p>
   <p>© 2026 {SITE}</p>
