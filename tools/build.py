@@ -6,6 +6,7 @@ tools/content/<name>.html → /<name>/（__ は / に。index は トップ）�
 import glob, html, os, re, sys, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, M2026_ASOF_DATE, SOURCES, NAHA_LIVES, CHANNEL_URL, CHANNEL_LIVE
+from data import KOMATSU_RUNWAY, KOMATSU_SCRAMBLE_MILESTONE, KOMATSU_FIRST_F35A, KOMATSU_PASSENGERS_2024, TERRITORIAL_SEA_NM
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://xn--pckta2g7cl0c.com"
@@ -91,6 +92,12 @@ def fill(body):
                                     [[k, sum(M2026[k]), sum(M2025[k][:len(M2026[k])]), sum(M2025[k])] for k in ["合計", "北空", "中空", "西空", "南西空", "中国", "ロシア"]]),
         "LATEST_TOTAL": lambda: f"{sum(M2026['合計']):,}",
         "LATEST_ASOF": lambda: M2026_ASOF,
+        "KOMATSU_RUNWAY": lambda: "×".join(f"{size:,}m" for size in KOMATSU_RUNWAY),
+        "KOMATSU_SCRAMBLE_MILESTONE": lambda: f"{KOMATSU_SCRAMBLE_MILESTONE:,}",
+        "KOMATSU_FIRST_F35A": lambda: f"{KOMATSU_FIRST_F35A:,}",
+        "KOMATSU_DOMESTIC_2024": lambda: f"{KOMATSU_PASSENGERS_2024[0]:,}",
+        "KOMATSU_INTERNATIONAL_2024": lambda: f"{KOMATSU_PASSENGERS_2024[1]:,}",
+        "TERRITORIAL_SEA_NM": lambda: str(TERRITORIAL_SEA_NM),
     }
     return re.sub(r"\{\{(\w+)\}\}", lambda m: rep[m.group(1)](), body)
 

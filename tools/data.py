@@ -44,7 +44,31 @@ _py, _pm, _pd = (int(x) for x in _J["published"].split("-"))
 M2026_ASOF = f"{_y}年{_m}月{_d}日現在（{_py}年{_pm}月{_pd}日公表）"
 M2026_ASOF_DATE = _J["asof"]
 
+KOMATSU_RUNWAY = (2700, 45)
+KOMATSU_SCRAMBLE_MILESTONE = 3000
+KOMATSU_FIRST_F35A = 3
+KOMATSU_PASSENGERS_2024 = (1264306, 212050)
+TERRITORIAL_SEA_NM = 12
+
 SOURCES = {
+    "adiz_whitepaper": ("防衛省「2022年版 防衛白書」日本と周辺国・地域の防空識別圏（図表）", "https://www.mod.go.jp/j/publication/wp/wp2022/pdf/R04030101.pdf"),
+    "adiz_shugiin": ("衆議院 安全保障委員会（2013年12月6日）", "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/001518520131206003.htm"),
+    "adiz_sangiin": ("参議院 外交防衛委員会（2014年4月22日）", "https://kokkai.ndl.go.jp/simple/detail?minId=118613950X01320140422&spkNum=231"),
+    "adiz_ogasawara": ("航空自衛隊 航空幕僚長記者会見（2026年2月10日）", "https://www.mod.go.jp/asdf/news/20260212.pdf"),
+    "adiz_airspace": ("航空自衛隊「航空自衛隊が守る領域」", "https://www.mod.go.jp/asdf/about/role/role02/index.html"),
+    "adiz_fir": ("国土交通省「職員インタビュー 航空局」飛行情報区", "https://www.mlit.go.jp/Road25/interview_field/koku/index.html"),
+    "adiz_territorial_sea": ("海上保安庁 海洋情報部「領海等に関する用語」", "https://www1.kaiho.mlit.go.jp/ryokai/yougo.html"),
+    "adiz_mofa": ("外務省「中国国防部による『東シナ海防空識別区』の発表について」（2013年11月24日）", "https://www.mofa.go.jp/mofaj/press/page4_000293.html"),
+    "komatsu_base": ("航空自衛隊 小松基地「基地紹介」", "https://www.mod.go.jp/asdf/komatsu/1/third/12.html"),
+    "komatsu_units": ("航空自衛隊 小松基地「所在部隊」", "https://www.mod.go.jp/asdf/komatsu/1/third/13.html"),
+    "komatsu_flight": ("航空自衛隊 小松基地「飛行群」", "https://www.mod.go.jp/asdf/komatsu/1/third/fourth/131.html"),
+    "komatsu_maintenance": ("航空自衛隊 小松基地「整備補給群」", "https://www.mod.go.jp/asdf/komatsu/1/third/fourth/135.html"),
+    "komatsu_atc": ("航空自衛隊 航空保安管制群「小松管制隊」", "https://www.mod.go.jp/asdf/atcg/equipment/butai/komatsu/"),
+    "komatsu_airport": ("国土交通省 航空局「共用空港・小松飛行場」空港概況・沿革・輸送実績", "https://www.mlit.go.jp/koku/content/002021267.pdf"),
+    "komatsu_f35": ("近畿中部防衛局「航空自衛隊小松基地へのF-35Aの配備」", "https://www.mod.go.jp/rdb/kinchu/pr/promotion/outline/kinchu/pdf/kinki-chubu_095.pdf"),
+    "komatsu_history": ("近畿中部防衛局 第25回防衛セミナー議事録", "https://www.mod.go.jp/rdb/kinchu/pr/seminar/pdf/seminar25_minute.pdf"),
+    "komatsu_support": ("航空自衛隊「航空支援集団の役割」", "https://www.mod.go.jp/asdf/asc/about/task/index.html"),
+    "komatsu_cadf": ("航空自衛隊 中部航空方面隊「部隊紹介」", "https://www.mod.go.jp/asdf/cadf/butai_shoukai/index2.html"),
     "mlatest": (_J["source_title"], _J["source_url"]),
     "h2026": ("統合幕僚監部「2026年度上半期までの緊急発進実施状況について」（2026年10月16日）", "https://www.mod.go.jp/js/pdf/2026/p20261016_07.pdf"),
     "y2025": ("統合幕僚監部「2025年度（令和7年度）緊急発進実施状況について」（2026年4月17日）", "https://www.mod.go.jp/js/pdf/2026/p20260417_03.pdf"),
