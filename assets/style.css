@@ -251,3 +251,24 @@ section.block h2{font-size:1.35rem}
 .ytbtns{display:flex;flex-wrap:wrap;gap:8px}
 .ytbtns a{display:inline-block;padding:8px 14px;border-radius:999px;background:#c00;color:#fff;text-decoration:none;font-weight:700}
 .ytbtns a+a{background:#555}
+
+.gallery.wall figcaption a{position:static;display:inline;color:inherit;text-decoration:underline}
+.block table th:first-child,.block table td:first-child{min-width:6.5em}
+/* 要点の箱・手順・よくある質問 */
+.points{background:#fff8ea;border:2px solid #f2a33a;border-radius:14px;padding:14px 18px;margin:14px 0}
+.points p{margin:0 0 6px}
+.points ul{margin:0;padding-left:1.2em}
+ol.steps,.block ol.steps{list-style:none;padding:0;margin:14px 0;counter-reset:st}
+ol.steps li,.block ol.steps li{position:relative;counter-increment:st;padding:10px 12px 10px 52px;margin:0 0 10px;background:#f1f6fc;border-radius:12px;min-height:48px}
+ol.steps li::before{content:counter(st);position:absolute;left:12px;top:10px;width:28px;height:28px;line-height:28px;border-radius:50%;background:#0a2540;color:#fff;text-align:center;font-weight:700;font-size:.9rem}
+.faq details{border:1px solid #d8e4f0;border-radius:12px;padding:10px 14px;margin:0 0 10px;background:#fff}
+.faq summary{font-weight:700;cursor:pointer}
+.faq details p{margin:8px 0 0}
+
+.page-hero.photo-hero{background-size:cover;background-position:center;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:90px 24px 46px}
+.page-hero.photo-hero::after{display:none}
+.page-hero.photo-hero h1{font-size:1.9rem;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.page-hero .credit{position:absolute;right:10px;bottom:6px;margin:0;font-size:.62rem;color:#dbe6f2;opacity:.9}
+.page-hero .credit a{color:#dbe6f2}
+.card.has-thumb{padding-top:0;overflow:hidden}
+.card .thumb{display:block;width:calc(100% + 36px);max-width:none;margin:0 -18px 12px;aspect-ratio:16/9;object-fit:cover}

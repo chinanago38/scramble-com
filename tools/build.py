@@ -10,7 +10,7 @@ from data import YEARS, COUNTRY, MONTHS, M2025, M2026, M2026_ASOF, M2026_ASOF_DA
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = "https://xn--pckta2g7cl0c.com"
 SITE = "スクランブル.com"
-CSS_VER = "20261126b"
+CSS_VER = "20261127i"
 AD = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1061443138303693" crossorigin="anonymous"></script>'
 NAV = [("那覇のスクランブル", "/naha/"), ("最新の回数", "/latest/"), ("年度別の推移", "/data/"), ("国・地域別", "/country/"), ("方面隊別", "/houmentai/"), ("スクランブルとは", "/shikumi/")]
 esc = html.escape
@@ -182,13 +182,46 @@ def exprs(text):
     ctx = expr_ctx()
     return re.sub(r"\{\{=(.+?)\}\}", lambda m: str(eval(m.group(1), dict(ctx))), text)
 
+def picked_rows():
+    # seo-system の gh-grow が Wikimedia Commons から選んだ写真（slug・画像・元のページ・撮影者・ライセンス・説明）。写真の取り込みの Actions はこの表を書き換えない
+    rows = {}
+    p = os.path.join(ROOT, "tools", "photos", "picked.tsv")
+    if os.path.exists(p):
+        for l in open(p, encoding="utf-8").read().splitlines()[1:]:
+            c = l.split("\t")
+            if len(c) >= 7 and c[1].startswith("https://"): rows.setdefault(c[0], []).append(c)
+    return rows
+
+def photo_hero(url, h1, updated):
+    ph = picked_rows().get(url)
+    if not ph: return ""
+    c = [html.escape(x) for x in ph[0]]
+    credit = (f'<p class="credit">写真：{c[6]} {c[3]} / <a href="{c[5]}" rel="noopener license" target="_blank">{c[4]}</a>'
+              f'（<a href="{c[2]}" rel="noopener" target="_blank">Wikimedia Commons</a>）</p>')
+    return (f'<div class="page-hero photo-hero" style="background-image:linear-gradient(180deg,rgba(6,22,44,.35),rgba(6,22,44,.88)),url({c[1]})">'
+            f'<h1>{h1}</h1>{updated}{credit}</div>\n')
+
+def link_cards(main):
+    # リンクが3つ以上ならぶ一覧は、写真つきのカードにする
+    photos = picked_rows()
+    def rep(m):
+        items = re.findall(r'<li><a href="([^"]+)">(.*?)</a>(?:：|・)?(.*?)</li>', m.group(0), re.S)
+        if len(items) < 3: return m.group(0)
+        out = []
+        for u, t, d in items:
+            ph = photos.get(u)
+            img = f'<img class="thumb" src="{html.escape(ph[0][1])}" alt="{html.escape(ph[0][6])}" loading="lazy">' if ph else ""
+            out.append(f'<a class="card{" has-thumb" if img else ""}" href="{u}">{img}<strong>{strip(t)}</strong><small>{strip(d)}</small></a>')
+        return '<div class="cards">' + "".join(out) + "</div>"
+    return re.sub(r"<ul>(?:\s*<li><a href=(?:(?!</li>).)*</li>)+\s*</ul>", rep, main, flags=re.S)
+
 def render(url, title, desc, body):
     body = src_links(fill(body))
     m = re.search(r"<h1>(.*?)</h1>\s*(<p class=\"updated\">.*?</p>)?", body, re.S)
     hero = ""
     if m:
         body = body[:m.start()] + body[m.end():]
-        hero = f'<div class="page-hero"><h1>{m.group(1)}</h1>{m.group(2) or ""}</div>\n'
+        hero = photo_hero(url, m.group(1), m.group(2) or "") or f'<div class="page-hero"><h1>{m.group(1)}</h1>{m.group(2) or ""}</div>\n'
     k = body.find('<section class="sources">')
     main_part, src = (body[:k], body[k:].replace('<section class="sources">', '<section class="sources block">')) if k >= 0 else (body, "")
     crumb = "" if url == "/" else f'<div class="crumb"><a href="/">{SITE}</a> › {esc(strip(m.group(1)) if m else title)}</div>\n'
@@ -215,7 +248,7 @@ def render(url, title, desc, body):
 </div></header>
 
 <main><div class="wrap">
-{crumb}{hero}{blockify(main_part)}{src}
+{crumb}{hero}{blockify(link_cards(main_part))}{src}
 </div></main>
 
 <footer class="site"><div class="wrap">
